@@ -1,0 +1,23 @@
+#+title: Code and Derivations Repository 
+
+This repository contains the code and the derivations (in maxima sheets) used for the paper _"Equivalency of Complexification-Averaging and Enriched Multiple Scales for Slow-Fast Temporal Decomposition in Nonlinear Systems"_.
+
+All the files are tagged by an alphanumerical code that precedes an underscore in the filename. This will be used as the file's identifier.
+
+* Getting Started with the Repository
++ The =Project.toml= file should contain all that you will need to set this up.
++ Just open julia, activate the package at the root of the repository, and instantiate it so all the required packages are installed. 
+
+* Contents of the Repository
++ The folder =DERIV= contains the wxmaxima worksheets. This includes
+  + "a" General derivation of Complexification Averaging
+  + "b0" MMS/EMS derivation for a linear system
+  + "b1" MMS/EMS derivation for a Duffing system    
+  + "b2" MMS/EMS derivation for a forced Van der Pol system
+  + "c" Derivation of the harmonic coefficients of the Jenkins restoring force
++ The main folder contains all the other scripts:
+  + "a0", "a1", "a2", "a3", and "a01" analyze the linear system. The utility routines for this may be found in =linearsys.jl=.
+  + "b0", "b1" analyze the Duffing system. The relevant utility routines may be found in =duffingsys.jl=.
+  + "c0" analyzes the frictional system. The relevant utility routines may be found in =jenkinsys.jl=.
+  + "d0", "d1", and "d2" analyze the forced Van der Pol oscillator. The relevant utility routines may be found in =vdpsys.jl=.
+  + "za", "za1", "za0" are miscellaneous scripts I used for checking certain things.
