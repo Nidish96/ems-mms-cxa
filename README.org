@@ -11,6 +11,7 @@ All the files are tagged by an alphanumerical code that precedes an underscore i
 * Contents of the Repository
 + The folder =DERIV= contains the wxmaxima worksheets. This includes
   + "a" General derivation of Complexification Averaging
+  + "b" Generic MMS/EMS for generic types of nonlinearity
   + "b0" MMS/EMS derivation for a linear system
   + "b1" MMS/EMS derivation for a Duffing system    
   + "b2" MMS/EMS derivation for a forced Van der Pol system
