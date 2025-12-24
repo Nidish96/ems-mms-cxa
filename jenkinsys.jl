@@ -1,13 +1,5 @@
 using juliajim.HARMONIC
-
-# * Setup System
-function rocfun!(du, u, p, t)
-    (; zt, w0, al, f, Om) = p;
-    
-    du[1] = u[2];
-    du[2] = -w0^2*u[1]-2zt*w0*u[2] - al*u[1]^3 + f*cos(Om*t);
-    return du;
-end
+using LinearAlgebra
   
 # * Slow Flow
 function sflow!(du, u, p, t=0.0)
