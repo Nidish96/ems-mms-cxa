@@ -17,7 +17,7 @@ includet("./duffingsys.jl");
 analyze = false;
 savdats = true;
 
-savfigs = true;
+savfigs = false;
 if savfigs
     CairoMakie.activate!();
 else
@@ -40,8 +40,8 @@ u0[[rinds[1], iinds[1]]] .= 1.0;
 
 Om0 = 0.01pars.w0;
 Om1 = 2.5pars.w0;
-dOm = 0.05;
-cpars = (parm=:arclength, minDsc=1e-3, Dsc=:auto);
+dOm = 0.2;
+cpars = (angopt=deg2rad(30), maxiters=20, itopt=6, nsc=4);
 
 hbsols = [];
 
@@ -50,8 +50,8 @@ funduff(fi) = NonlinearFunction((du,u,p)->hbresfun!(du, u,
                                                     h, Nt));
 if analyze
     for (fi, f) in enumerate(pars.f)
-        sol, _, _, _, _ = CONTINUATE(u0, funduff(fi), [Om0, Om1], dOm;
-            cpars..., verbosity=0);
+        sol, _, _, _, _ = CONTINUATE(u0, funduff(fi), [Om1, Om0], dOm;
+            cpars..., verbosity=1);
         push!(hbsols, sol)
 
         display("Done $fi/$(length(pars.f)).")
@@ -96,6 +96,27 @@ if !analyze
     @load "./DATS/B0_duffss.jld2" hbsols slowsols slowh35s
 end
 
+# * Relative Metrics
+relerrs = zeros(length(typs), length(pars.f));
+relwerrs = zeros(length(typs), length(pars.f));
+relnl = zeros(length(pars.f));
+
+for (fi, hbsol) in enumerate(hbsols)
+    hbamp = (u->norm(u[[rinds[1], iinds[1]]])).(hbsol.u);
+    iw = argmax(hbamp);
+    Fnl = hbresfun!(nothing, hbsol[iw].u, (;pars..., Om=hbsol[iw].p, f=pars.f[fi]),
+        h, Nt);
+    relnl[fi] = norm(Fnl)/norm(pars.w0^2*hbsol[iw].u);
+    
+    for (ti, asol) in enumerate(getindex.(slowsols, fi))
+        slamp = norm.(asol.u);
+        iww = argmax(slamp);
+
+        relerrs[ti, fi] = maximum(slamp)/maximum(hbamp)-1;
+        relwerrs[ti, fi] = asol.p[iww]/hbsol.p[iw]-1;
+    end
+end
+
 # * Plotting
 set_theme!(theme_latexfonts())
 fsz = 28;
@@ -107,14 +128,14 @@ end
 ax = Axis(fig[1, 1], xlabel="Excitation Frequency (rad/s)",
           ylabel="Response (m)", yscale=Makie.pseudolog10);
 for (fi, (sol,f)) in enumerate(zip(hbsols,pars.f))
-    lines!(ax, last.(sol.up), norm.((u->u[1:end-1]).(sol.up)),
+    lines!(ax, sol.p, norm.((u->u[1:end-1]).(sol.up)),
            label="F = $(pars.f) N", linewidth=4,
            color=colorschemes[:grays][fi/(length(pars.f)+1)])
 end
 cols = [:Blues, :Reds, :Greens, :budaS];
 for (ti, (typ,ord,slows)) in enumerate(zip(typs,ords,slowsols))
     for (fi,(sol,f)) in enumerate(zip(slows,pars.f))
-        lines!(ax, last.(sol.up), norm.((u->u[1:end-1]).(sol.up)),
+        lines!(ax, sol.p, norm.((u->u[1:end-1]).(sol.up)),
                label=LaTeXString("$(typ) \$\\mathcal{O}(\\varepsilon^$(ord-1))\$, F = $(f) N"),
                color=colorschemes[cols[ti]][fi/(length(pars.f)+1)]);
     end
@@ -127,7 +148,7 @@ if Makie.current_backend()==GLMakie
 else
    display(fig)
 end
-   
+
 # * Separately
 lstl = Linestyle([0,5,6]);
 
@@ -153,7 +174,9 @@ for i in 1:2
 end
 for (ti, ax) in enumerate(axs)
     for (fi, (sol,f)) in enumerate(zip(hbsols,pars.f))
-        l1 = lines!(ax, last.(sol.up), norm.((u->u[[rinds[1], iinds[1]]]).(sol.up)),
+        hbamp = norm.((u->u[[rinds[1], iinds[1]]]).(sol.up));
+        
+        l1 = lines!(ax, sol.p, hbamp,
             label="F = $f N", linewidth=5,
             color=colorschemes[:grays][fi/(length(pars.f)+1)]);
         if ti==1
@@ -162,8 +185,9 @@ for (ti, ax) in enumerate(axs)
     end
     
     for (fi, (sol,f)) in enumerate(zip(hbsols,pars.f))
-        l2 = lines!(ax, last.(slowsols[ti][fi].up),
-            norm.(((u)->u[1:2]).(slowsols[ti][fi].up)),
+        hbamp = norm.((u->u[[rinds[1], iinds[1]]]).(sol.up));
+        slowamp = norm.(((u)->u[1:2]).(slowsols[ti][fi].up));
+        l2 = lines!(ax, slowsols[ti][fi].p, slowamp,
             label="F = $f N", linewidth=3,
             linestyle=lstl,
             color=colorschemes[:rainbow][1-fi/(length(pars.f)+1)]);
@@ -218,7 +242,7 @@ for i in 1:2
 end
 for (ti, ax) in enumerate(axs)
     for (fi, (sol,f)) in enumerate(zip(hbsols,pars.f))
-        l1 = lines!(ax, last.(sol.up), norm.((u->u[[rinds[3], iinds[3]]]).(sol.up)),
+        l1 = lines!(ax, sol.p, norm.((u->u[[rinds[3], iinds[3]]]).(sol.up)),
                     label="F = $f N", linewidth=5,
                     color=colorschemes[:grays][fi/(length(pars.f)+1)]);
         if ti==2
@@ -226,7 +250,7 @@ for (ti, ax) in enumerate(axs)
         end
     end
     for (fi, (sol,f)) in enumerate(zip(hbsols,pars.f))
-        l2 = lines!(ax, last.(slowsols[ti][fi].up),
+        l2 = lines!(ax, slowsols[ti][fi].p,
                     norm.(((u)->u[1:2]).(slowh35s[ti][fi])),
                     label="F = $f N", linewidth=3,
                     linestyle=lstl,

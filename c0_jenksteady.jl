@@ -1,4 +1,4 @@
-# * 
+# * Preamble
 using DifferentialEquations
 using NonlinearSolve
 using LinearAlgebra
@@ -16,7 +16,10 @@ using juliajim.CONTINUATION
 
 includet("./jenkinsys.jl");
 
-savfigs = true;
+analyze = false;
+savdats = true;
+
+savfigs = false;
 if savfigs
     CairoMakie.activate!();
 else
@@ -28,9 +31,6 @@ cfgs = [(zt = 0.25e-2, w0 = 2.0, kt=5, fs=1.0, f = [0.1, 0.25, 0.5, 1.0, 1.25], 
 ci = 1;
 pars = cfgs[ci];
 
-analyze = false;
-savdats = true;
-
 # * HB
 h = 0:7;
 Nhc = sum((h.==0) + 2(h.!=0));
@@ -41,11 +41,11 @@ u0 = zeros(Nhc);
 u0[[rinds[1], iinds[1]]] .= 1e-2;
 
 funjenk(fi) = NonlinearFunction((du,u,p)->hbresfun!(du,u,
-                                                    (;pars...,f=pars.f[fi],Om=p),h,Nt));
+    (;pars...,f=pars.f[fi],Om=p),h,Nt));
 
 Om0 = 0.05pars.w0;
 Om1 = 2.5pars.w0;
-dOm = 0.05pars.w0;
+dOm = 0.05;
 cpars = (parm=:arclength, nmax=1000);
 
 if analyze
@@ -68,7 +68,6 @@ if analyze
     end
 else
     @load "./DATS/C0_hbsols.jld2" hbsols
-    # hbsols = Vector{myNLSoln}.(hbsols);
 end
 
 # * Asymptotic Methods
@@ -108,6 +107,27 @@ else
 #    slowsols = [(u->Vector{myNLSoln}(u)).(s) for s in slowsols];
 end
 
+# * Relative Deviations and Nonlinearity Strength
+relerrs = zeros(length(typs), length(pars.f));
+relwerrs = zeros(length(typs), length(pars.f));
+relnl = zeros(length(pars.f));
+
+for (fi, hbsol) in enumerate(hbsols)
+    hbamp = (u->norm(u[[rinds[1], iinds[1]]])).(hbsol.u);
+    iw = argmax(hbamp);
+    Fnl = hbresfun!(nothing, hbsol[iw].u, (;pars..., Om=hbsol[iw].p, f=pars.f[fi]),
+        h, Nt);
+    relnl[fi] = norm(Fnl)/norm(pars.w0^2*hbsol[iw].u);
+    
+    for (ti, asol) in enumerate(getindex.(slowsols, fi))
+        slamp = norm.(asol.u);
+        iww = argmax(slamp);
+
+        relerrs[ti, fi] = maximum(slamp)/maximum(hbamp)-1;
+        relwerrs[ti, fi] = asol.p[iww]/hbsol.p[iw]-1;
+    end
+end
+
 # * Plot
 lstl = Linestyle([0, 5,6]);
 
@@ -127,7 +147,7 @@ plothb!(ax, sols, cschem, wd=3, lab="") = begin
 end;
 plotsol!(ax, sols, cschem, wd=3, lab="", lst=:solid) = begin
     for (fi, (sol, f)) in enumerate(zip(sols, pars.f))
-        lines!(ax, last.(sol.up), (u->norm(u[1:end-1])/f).(sol.up),
+        lines!(ax, last.(sol.up), norm.(sol.u)/f,
             linewidth=wd, label=(lab=="") ? "F = $(f) N" : lab,
             color=colorschemes[cschem][1-fi/(length(pars.f)+1)],
             linestyle=lst)
@@ -197,7 +217,7 @@ plothb3!(ax, sols, cschem, wd=3, lab="") = begin
 end;
 plotsol3!(ax, sols, h35s, cschem, wd=3, lab="", lst=:solid) = begin
     for (fi, (sol, h35, f)) in enumerate(zip(sols, h35s, pars.f))
-        lines!(ax, last.(sol.up), (u->norm(u)).(h35),
+        lines!(ax, last.(sol.up), norm.(h35),
             linewidth=wd,
             label=(lab=="") ? "F = $(f) N" : lab,
             color=colorschemes[cschem][1-fi/(length(pars.f)+1)],
@@ -216,9 +236,9 @@ for (ti, typ) in enumerate(typs[1:2])
     end
 
     ax = Axis(fig1[1, ti], xlabel="Excitation Frequency (rad/s)",
-        title=ttl);
+        title=ttl, yscale=log10);
     if ti==1
-        ax.ylabel=L"$H_3$ Response (m/N)"
+        ax.ylabel=L"$H_3$ Response (m)"
         lab1 = "";
         lab2 = "";
     else
@@ -233,6 +253,7 @@ for (ti, typ) in enumerate(typs[1:2])
         axislegend(ax, merge=true, unique=false, position=:rt)
     end
     xlims!(ax, Om0, Om1)
+    ylims!(ax, 2e-4, 1e-1);
 
     push!(axs, ax);
 end
@@ -268,13 +289,14 @@ plotsol!(ax, slowsols[3], :rainbow, 3, lab2, lstl)
 axislegend(ax, merge=true, unique=false, position=:lt, nbanks=1)
 
 ax = Axis(fig2[1, 2], xlabel="Excitation Frequency (rad/s)",
-    ylabel=L"$H_3$ Response (m/N)");
+    ylabel=L"$H_3$ Response (m)", yscale=log10);
 lab1 = "Harmonic Balance";
 lab2 = "Asymptotic Solution";
 plothb3!(ax, hbsols, :grays, 5, lab1)
 plotsol3!(ax, slowsols[3], slowh35s[3], :rainbow, 3, lab2, lstl)
 
-linkyaxes!(ax, axs[1]);
+# linkyaxes!(ax, axs[1]);
+ylims!(ax, 2e-4, 1e-1);
 
 axislegend(ax, merge=true, unique=false, position=:rt, nbanks=1)
 

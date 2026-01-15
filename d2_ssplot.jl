@@ -18,7 +18,7 @@ savdats = true;
 pars = (c=0.04, w0=2., al=0.1, f=1., Om=0.1);
 
 # * Save figure boolean
-savfigs = true;
+savfigs = false;
 if savfigs
     using CairoMakie
     CairoMakie.activate!();
@@ -35,6 +35,7 @@ ords = [1, 2, 1, 2];
 
 sldat = [load("./DATS/D1_$(typ)_$(ord).jld2") for (typ,ord) in zip(typs,ords)];
 sldat = [(; [Symbol(k)=>v for (k,v) in sld]...) for sld in sldat][:];
+
 
 # * Plot Separately
 lstl = Linestyle([0,5,6]);

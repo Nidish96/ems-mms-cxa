@@ -83,11 +83,11 @@ function hbresfun!(du, u, p, h, N)
 
     _, _, _, rinds, _ = HINDS(1, h);
 
-    du[:] = E*u+Fnl;
-    du[rinds[1]] -= f;
+    if du !== nothing
+        du[:] = E*u+Fnl;
+        du[rinds[1]] -= f;        
+    end
 
-    return du;
+    return Fnl;
 end
-
-# * Averaging Generating Function
 

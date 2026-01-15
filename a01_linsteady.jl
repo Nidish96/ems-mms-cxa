@@ -4,6 +4,7 @@ using NonlinearSolve
 using LaTeXStrings
 using ForwardDiff
 using LinearAlgebra
+using ColorSchemes
 
 using GLMakie
 using Revise
@@ -21,7 +22,7 @@ end
 
 cfgs = [(zt = 0.25e-2, w0 = 2.0, f = 1.0, Om=1.9),
         (zt = 25e-2, w0 = 2.0, f = 1.0, Om=1.9)];
-ci = 1;
+ci = 2;
 
 # * Compute
 pars = cfgs[ci];
@@ -50,6 +51,7 @@ end
 # * Plot
 Oms = [s.up[end] for s in sols[1]];
 Aans = [ansol((pars..., Om=om)) for om in Oms];
+lstl = Linestyle([0, 5,6]);
 
 set_theme!(theme_latexfonts())
 fsz = 24;
@@ -61,9 +63,12 @@ end
 ax = Axis(fig[1, 1], xlabel="Excitation Frequency (rad/s)",
           ylabel="Forced Response Function (m/N)", yscale=log10);
 mszs = [0, 0, [i%3==0 ? 18 : 0 for i in eachindex(sols[3])], 0];
-styls = [:solid, :dash, :solid, :dash];
-cols = [:blue, :blue, :red, :red];
+styls = [:solid, lstl, :solid, lstl];
+cols = colorschemes[:rainbow][[0.3,0.1,0.8,1.0]];
+# cols = [:blue, :blue, :red, :red];
 
+lines!(ax, Oms,  abs.(Aans), color=:black, linewidth=5,
+    label="Exact");
 for (i,sol) in enumerate(sols)
     if typs[i] == :MMS
         lbl = LaTeXString("$(typs[i]) \$\\mathcal{O}(\\varepsilon^$(ords[i]-1))\$");
@@ -73,12 +78,10 @@ for (i,sol) in enumerate(sols)
     
     lines!(ax, [s.up[end] for s in sol],
            [norm(s.up[1:2]) for s in sol],
-           linewidth=2, linestyle=styls[i],
+           linewidth=3, linestyle=styls[i],
            color=cols[i],
            label=lbl)
 end
-lines!(ax, Oms,  abs.(Aans), color=:black, linewidth=4,
-       linestyle=:dot, label="Exact");
 
 if ci==1
     axislegend(ax);

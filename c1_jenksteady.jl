@@ -28,8 +28,8 @@ cfgs = [(zt = 0.25e-2, w0 = 2.0, kt=5, fs=1.0, f = [0.1, 0.25, 0.5, 1.0, 1.25], 
 ci = 1;
 pars = cfgs[ci];
 
-analyze = true;
-savdats = true;
+analyze = false;
+savdats = false;
 
 # * HB
 h = 0:7;
@@ -68,7 +68,6 @@ if analyze
     end
 else
     @load "./DATS/C1_hbsols.jld2" hbsols
-    # hbsols = Vector{myNLSoln}.(hbsols);
 end
 
 # * Asymptotic Methods
@@ -87,9 +86,29 @@ if analyze
     slowsols = [Vector{myNLSoln}[] for _ in typs];
     slowh35s = [Vector{Vector{Float64}}[] for _ in typs];
     for (ti, (typ,ord)) in enumerate(zip(typs,ords))
+        if ti==2
+            cpars = (parm=:arclength, Dsc=:auto, angopt=deg2rad(30), itopt=4, nmax=8000);
+        else
+            dOm = 0.05pars.w0;  # 0.05pars.w0
+            cpars = (parm=:arclength, Dsc=:none, nmax=4000);
+        end
+
         for (fi, f) in enumerate(pars.f)
+            if ti==2
+                if fi<5
+                    dOm = 0.1;
+                    Om1 = 5.0;
+                else
+                    dOm = 0.2;
+                    Om1 = 4.5;
+                end
+            else
+                dOm = 0.05pars.w0;
+                Om1 = 5;
+            end
             sol, _, _, _, _ = CONTINUATE(u0, fun(ti, fi), [Om1, Om0], dOm;
                 cpars..., verbosity=0);
+            
             sol = sol[end:-1:1];
 
             harms = (up->sflow_harms(up[1:2],
@@ -108,7 +127,27 @@ if analyze
     end
 else
     @load "./DATS/C1_asymsols.jld2" slowsols slowh35s
-#    slowsols = [(u->Vector{myNLSoln}(u)).(s) for s in slowsols];
+end
+
+# * Relative Deviations and Nonlinearity Strength
+relerrs = zeros(length(typs), length(pars.f));
+relwerrs = zeros(length(typs), length(pars.f));
+relnl = zeros(length(pars.f));
+
+for (fi, hbsol) in enumerate(hbsols)
+    hbamp = (u->norm(u[[rinds[1], iinds[1]]])).(hbsol.u);
+    iw = argmax(hbamp);
+    Fnl = hbresfun!(nothing, hbsol[iw].u, (;pars..., Om=hbsol[iw].p, f=pars.f[fi]),
+        h, Nt);
+    relnl[fi] = norm(Fnl)/norm(pars.w0^2*hbsol[iw].u);
+    
+    for (ti, asol) in enumerate(getindex.(slowsols, fi))
+        slamp = norm.(asol.u);
+        iww = argmax(slamp);
+
+        relerrs[ti, fi] = maximum(slamp)/maximum(hbamp)-1;
+        relwerrs[ti, fi] = asol.p[iww]/hbsol.p[iw]-1;
+    end
 end
 
 # * Plot
@@ -130,14 +169,14 @@ plothb!(ax, sols, cschem, wd=3, lab="") = begin
 end;
 plotsol!(ax, sols, cschem, wd=3, lab="", lst=:solid) = begin
     for (fi, (sol, f)) in enumerate(zip(sols, pars.f))
-        lines!(ax, last.(sol.up), (u->norm(u[1:end-1])/f).(sol.up),
+        lines!(ax, last.(sol.up), norm.(sol.u)/f,
             linewidth=wd, label=(lab=="") ? "F = $(f) N" : lab,
             color=colorschemes[cschem][1-fi/(length(pars.f)+1)],
             linestyle=lst)
     end
 end;
 
-plis = [1,2];
+plis = [5,6];
 axs = [];
 for (ti, (typ,ord,slowsol)) in enumerate(zip(typs[plis],ords[plis],slowsols[plis]))
     if typ == :MMS
@@ -179,7 +218,7 @@ else
 end
 
 if savfigs
-   save("./FIGS/C1_H1resps_C$(ci).pdf", fig)
+   save("./FIGS/C1_H1resps_C$(ci)_P$(join(string.(plis))).pdf", fig)
 end
    
 # * Third Harmonic
@@ -193,7 +232,8 @@ end
 
 plothb3!(ax, sols, cschem, wd=3, lab="") = begin
     for (fi, (sol, f)) in enumerate(zip(sols, pars.f))
-        lines!(ax, last.(sol.up), (u->norm(u[[rinds[3], iinds[3]]])).(sol.up),
+        lines!(ax, last.(sol.up),
+            max.(eps(), (u->norm(u[[rinds[3], iinds[3]]])).(sol.up)),
             linewidth=wd,
             label=(lab=="") ? "F = $(f) N" : lab,
             color=colorschemes[cschem][fi/(length(pars.f)+1+1)])
@@ -201,7 +241,7 @@ plothb3!(ax, sols, cschem, wd=3, lab="") = begin
 end;
 plotsol3!(ax, sols, h35s, cschem, wd=3, lab="", lst=:solid) = begin
     for (fi, (sol, h35, f)) in enumerate(zip(sols, h35s, pars.f))
-        lines!(ax, last.(sol.up), (u->norm(u)).(h35),
+        lines!(ax, last.(sol.up), max.(eps(), norm.(h35)),
             linewidth=wd,
             label=(lab=="") ? "F = $(f) N" : lab,
             color=colorschemes[cschem][1-fi/(length(pars.f)+1)],
@@ -221,9 +261,9 @@ for (ti, (typ, ord, slowsol, slowh35)) in enumerate(zip(typs[plis],ords[plis], s
     end
 
     ax = Axis(fig1[1, ti], xlabel="Excitation Frequency (rad/s)",
-        title=ttl);
+        title=ttl, yscale=log10);
     if ti==1
-        ax.ylabel=L"$H_3$ Response (m/N)"
+        ax.ylabel=L"$H_3$ Response (m)"
         lab1 = "";
         lab2 = "";
     else
@@ -238,6 +278,7 @@ for (ti, (typ, ord, slowsol, slowh35)) in enumerate(zip(typs[plis],ords[plis], s
         axislegend(ax, merge=true, unique=false, position=:rt)
     end
     xlims!(ax, Om0, Om1)
+    ylims!(ax, 2e-4, 1e-1);    
 
     push!(axs, ax);
 end
@@ -275,7 +316,7 @@ plotsol!(ax1, slowsols[pli], :rainbow, 3, lab2, lstl)
 axislegend(ax1, merge=true, unique=false, position=:lt, nbanks=1)
 
 ax2 = Axis(fig2[1, 2], xlabel="Excitation Frequency (rad/s)",
-    ylabel=L"$H_3$ Response (m)");
+    ylabel=L"$H_3$ Response (m)", yscale=log10);
 lab1 = "Harmonic Balance";
 lab2 = "Asymptotic Solution";
 plothb3!(ax2, hbsols, :grays, 5, lab1)
@@ -283,7 +324,8 @@ plotsol3!(ax2, slowsols[pli], slowh35s[pli], :rainbow, 3, lab2, lstl)
 
 linkxaxes!(ax1, ax2);
 xlims!(ax1, Om0, Om1);
-linkyaxes!(ax2, axs[1]);
+# linkyaxes!(ax2, axs[1]);
+ylims!(ax2, 2e-4, 1e-1);
 
 axislegend(ax2, merge=true, unique=false, position=:rt, nbanks=1)
 
