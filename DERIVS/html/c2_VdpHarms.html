@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>c2_VdpHarms</title>
+  <meta name="generator" content="wxMaxima">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    displayAlign: "left",
+    context: "MathJax",
+    TeX: {TagSide: "left"}
+  })
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  // A comment that hinders wxWidgets from optimizing this tag too much.
+</script>
+  <link rel="stylesheet" type="text/css" href="c2_VdpHarms_htmlimg/c2_VdpHarms.css">
+ </head>
+ <body>
+
+<!-- ************************************************************************** -->
+<!-- *        Created with wxMaxima version 24.02.2_DevelopmentSnapshot       * -->
+<!-- ************************************************************************** -->
+<noscript><div class="error message"><p>Please enable JavaScript in order to get a 2d display of the equations embedded in this web page.</p></div></noscript><p hidden = "hidden">\(      \DeclareMathOperator{\abs}{abs}
+      \newcommand{\ensuremath}[1]{\mbox{$#1$}}
+\)</p>
+
+<!-- Text cell -->
+
+
+<div class="comment">
+This file develops the harmonics of the van der pol nonlinear damping term.
+</div>
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+ -->	
+  </span></td>
+  <td><span class="input">
+<span class="code_function">kill</span><span class="code_operator">(</span><span class="code_variable">all</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_variable">derivabbrev</span><span class="code_operator">:</span><span class="code_function">true</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_function">fnl</span><span class="code_operator">(</span><span class="code_variable">x</span><span class="code_endofline">,</span><span class="code_variable">xd</span><span class="code_operator">)</span><span class="code_operator">:</span><span class="code_operator">=</span><span class="code_variable">α</span><span class="code_operator">·</span><span class="code_variable">x</span><span class="code_operator">·</span><span class="code_operator">·</span><span class="code_number">2</span><span class="code_operator">·</span><span class="code_variable">xd</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_endofline"><br>
+</span><span class="code_variable">n</span><span class="code_operator">:</span><span class="code_number">3</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_variable">x0</span><span class="code_operator">:</span><span class="code_variable">A0</span><span class="code_operator">·</span><span class="code_function">cos</span><span class="code_operator">(</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_operator">+</span><span class="code_variable">B0</span><span class="code_operator">·</span><span class="code_function">sin</span><span class="code_operator">(</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_function">depends</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">A0</span><span class="code_endofline">,</span><span class="code_variable">B0</span><span class="code_operator">]</span><span class="code_endofline">,</span><span class="code_operator">[</span><span class="code_variable">T1</span><span class="code_endofline">,</span><span class="code_variable">T2</span><span class="code_endofline">,</span><span class="code_variable">T3</span><span class="code_operator">]</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_function">depends</span><span class="code_operator">(</span><span class="code_variable">σ</span><span class="code_endofline">,</span><span class="code_function">create_list</span><span class="code_operator">(</span><span class="code_function">concat</span><span class="code_operator">(</span><span class="code_variable">T</span><span class="code_endofline">,</span><span class="code_variable">i</span><span class="code_operator">)</span><span class="code_endofline">,</span><span class="code_variable">i</span><span class="code_endofline">,</span><span class="code_number">0</span><span class="code_endofline">,</span><span class="code_variable">n</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_variable">dsub_f</span><span class="code_operator">:</span><span class="code_function">create_list</span><span class="code_operator">(</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">σ</span><span class="code_endofline">,</span><span class="code_function">concat</span><span class="code_operator">(</span><span class="code_variable">T</span><span class="code_endofline">,</span><span class="code_variable">i</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_operator">=</span><span class="code_function">concat</span><span class="code_operator">(</span><span class="code_variable">d</span><span class="code_endofline">,</span><span class="code_variable">i</span><span class="code_endofline">,</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_variable">i</span><span class="code_endofline">,</span> <span class="code_number">0</span><span class="code_endofline">,</span> <span class="code_variable">n</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_variable">dsub_b</span><span class="code_operator">:</span><span class="code_function">create_list</span><span class="code_operator">(</span><span class="code_function">concat</span><span class="code_operator">(</span><span class="code_variable">d</span><span class="code_endofline">,</span><span class="code_variable">i</span><span class="code_endofline">,</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_operator">=</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">σ</span><span class="code_endofline">,</span><span class="code_function">concat</span><span class="code_operator">(</span><span class="code_variable">T</span><span class="code_endofline">,</span><span class="code_variable">i</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_variable">i</span><span class="code_endofline">,</span> <span class="code_number">0</span><span class="code_endofline">,</span> <span class="code_variable">n</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_function">gradef</span><span class="code_operator">(</span><span class="code_variable">T0</span><span class="code_endofline">,</span> <span class="code_variable">t</span><span class="code_endofline">,</span> <span class="code_number">1</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_function">gradef</span><span class="code_operator">(</span><span class="code_variable">T1</span><span class="code_endofline">,</span> <span class="code_variable">t</span><span class="code_endofline">,</span> <span class="code_variable">ε</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_function">gradef</span><span class="code_operator">(</span><span class="code_variable">T2</span><span class="code_endofline">,</span> <span class="code_variable">t</span><span class="code_endofline">,</span> <span class="code_variable">ε</span><span class="code_operator">·</span><span class="code_operator">·</span><span class="code_number">2</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_function">gradef</span><span class="code_operator">(</span><span class="code_variable">σ</span><span class="code_endofline">,</span> <span class="code_variable">T0</span><span class="code_endofline">,</span> <span class="code_variable">σT0</span><span class="code_operator">)</span><span class="code_endofline">$</span>  </span></td>
+</tr></table>
+
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+ -->	
+  </span></td>
+  <td><span class="input">
+<span class="code_function">Cnl0</span><span class="code_operator">(</span><span class="code_variable">m</span><span class="code_operator">)</span><span class="code_operator">:</span><span class="code_operator">=</span><span class="code_function">subst</span><span class="code_operator">(</span><span class="code_variable">dsub_b</span><span class="code_endofline">,</span> <span class="code_function">factor</span><span class="code_operator">(</span><span class="code_function">integrate</span><span class="code_operator">(</span><span class="code_function">subst</span><span class="code_operator">(</span><span class="code_variable">dsub_f</span><span class="code_endofline">,</span> <span class="code_function">fnl</span><span class="code_operator">(</span><span class="code_variable">x0</span><span class="code_endofline">,</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">x0</span><span class="code_endofline">,</span><span class="code_variable">T0</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_operator">·</span><span class="code_function">cos</span><span class="code_operator">(</span><span class="code_variable">m</span><span class="code_operator">·</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_variable">σ</span><span class="code_endofline">,</span> <span class="code_number">0</span><span class="code_endofline">,</span> <span class="code_number">2</span><span class="code_operator">·</span><span class="code_variable">%pi</span><span class="code_operator">)</span><span class="code_operator">/</span><span class="code_variable">%pi</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_function">Snl0</span><span class="code_operator">(</span><span class="code_variable">m</span><span class="code_operator">)</span><span class="code_operator">:</span><span class="code_operator">=</span><span class="code_function">subst</span><span class="code_operator">(</span><span class="code_variable">dsub_b</span><span class="code_endofline">,</span> <span class="code_function">factor</span><span class="code_operator">(</span><span class="code_function">integrate</span><span class="code_operator">(</span><span class="code_function">subst</span><span class="code_operator">(</span><span class="code_variable">dsub_f</span><span class="code_endofline">,</span> <span class="code_function">fnl</span><span class="code_operator">(</span><span class="code_variable">x0</span><span class="code_endofline">,</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">x0</span><span class="code_endofline">,</span><span class="code_variable">T0</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_operator">·</span><span class="code_function">sin</span><span class="code_operator">(</span><span class="code_variable">m</span><span class="code_operator">·</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_variable">σ</span><span class="code_endofline">,</span> <span class="code_number">0</span><span class="code_endofline">,</span> <span class="code_number">2</span><span class="code_operator">·</span><span class="code_variable">%pi</span><span class="code_operator">)</span><span class="code_operator">/</span><span class="code_variable">%pi</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">$</span>  </span></td>
+</tr></table>
+
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+ -->	
+  </span></td>
+  <td><span class="input">
+<span class="code_variable">x1</span><span class="code_operator">:</span><span class="code_operator">(</span><span class="code_function">Cnl0</span><span class="code_operator">(</span><span class="code_number">3</span><span class="code_operator">)</span><span class="code_operator">·</span><span class="code_function">cos</span><span class="code_operator">(</span><span class="code_number">3</span><span class="code_operator">·</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_operator">+</span><span class="code_function">Snl0</span><span class="code_operator">(</span><span class="code_number">3</span><span class="code_operator">)</span><span class="code_operator">·</span><span class="code_function">sin</span><span class="code_operator">(</span><span class="code_number">3</span><span class="code_operator">·</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_operator">/</span><span class="code_operator">(</span><span class="code_number">8</span><span class="code_operator">·</span><span class="code_variable">σT0</span><span class="code_operator">·</span><span class="code_operator">·</span><span class="code_number">2</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_variable">fnl1</span><span class="code_operator">:</span><span class="code_function">trigreduce</span><span class="code_operator">(</span><span class="code_function">subst</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">xx</span><span class="code_operator">=</span><span class="code_variable">x0</span><span class="code_endofline">,</span><span class="code_variable">xxd</span><span class="code_operator">=</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">x0</span><span class="code_endofline">,</span><span class="code_variable">T0</span><span class="code_operator">)</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_function">diff</span><span class="code_operator">(</span><span class="code_function">fnl</span><span class="code_operator">(</span><span class="code_variable">xx</span><span class="code_endofline">,</span><span class="code_variable">xxd</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_variable">xx</span><span class="code_operator">)</span><span class="code_operator">·</span><span class="code_variable">x1</span><span class="code_operator">+</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_function">fnl</span><span class="code_operator">(</span><span class="code_variable">xx</span><span class="code_endofline">,</span><span class="code_variable">xxd</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_variable">xxd</span><span class="code_operator">)</span><span class="code_operator">·</span><span class="code_operator">(</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">x1</span><span class="code_endofline">,</span> <span class="code_variable">T0</span><span class="code_operator">)</span> <span class="code_operator">+</span> <span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">x0</span><span class="code_endofline">,</span><span class="code_variable">T1</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">$</span>  </span></td>
+</tr></table>
+
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+ -->	
+  </span></td>
+  <td><span class="input">
+<span class="code_function">Cnl1</span><span class="code_operator">(</span><span class="code_variable">m</span><span class="code_operator">)</span><span class="code_operator">:</span><span class="code_operator">=</span><span class="code_function">subst</span><span class="code_operator">(</span><span class="code_variable">dsub_b</span><span class="code_endofline">,</span><span class="code_function">expand</span><span class="code_operator">(</span><span class="code_function">integrate</span><span class="code_operator">(</span><span class="code_function">subst</span><span class="code_operator">(</span><span class="code_variable">dsub_f</span><span class="code_endofline">,</span> <span class="code_variable">fnl1</span><span class="code_operator">·</span><span class="code_function">cos</span><span class="code_operator">(</span><span class="code_variable">m</span><span class="code_operator">·</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_variable">σ</span><span class="code_endofline">,</span> <span class="code_number">0</span><span class="code_endofline">,</span> <span class="code_number">2</span><span class="code_operator">·</span><span class="code_variable">%pi</span><span class="code_operator">)</span><span class="code_operator">/</span><span class="code_variable">%pi</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_function">Snl1</span><span class="code_operator">(</span><span class="code_variable">m</span><span class="code_operator">)</span><span class="code_operator">:</span><span class="code_operator">=</span><span class="code_function">subst</span><span class="code_operator">(</span><span class="code_variable">dsub_b</span><span class="code_endofline">,</span><span class="code_function">expand</span><span class="code_operator">(</span><span class="code_function">integrate</span><span class="code_operator">(</span><span class="code_function">subst</span><span class="code_operator">(</span><span class="code_variable">dsub_f</span><span class="code_endofline">,</span> <span class="code_variable">fnl1</span><span class="code_operator">·</span><span class="code_function">sin</span><span class="code_operator">(</span><span class="code_variable">m</span><span class="code_operator">·</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_variable">σ</span><span class="code_endofline">,</span> <span class="code_number">0</span><span class="code_endofline">,</span> <span class="code_number">2</span><span class="code_operator">·</span><span class="code_variable">%pi</span><span class="code_operator">)</span><span class="code_operator">/</span><span class="code_variable">%pi</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">$</span>  </span></td>
+</tr></table>
+
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+ -->	
+  </span></td>
+  <td><span class="input">
+<span class="code_function">map</span><span class="code_operator">(</span><span class="code_variable">Cnl0</span><span class="code_endofline">,</span> <span class="code_operator">[</span><span class="code_number">1</span><span class="code_endofline">,</span><span class="code_number">3</span><span class="code_endofline">,</span><span class="code_number">5</span><span class="code_operator">]</span><span class="code_operator">)</span><span class="code_endofline">;</span><span class="code_endofline"><br>
+</span><span class="code_function">map</span><span class="code_operator">(</span><span class="code_variable">Snl0</span><span class="code_endofline">,</span> <span class="code_operator">[</span><span class="code_number">1</span><span class="code_endofline">,</span><span class="code_number">3</span><span class="code_endofline">,</span><span class="code_number">5</span><span class="code_operator">]</span><span class="code_operator">)</span><span class="code_endofline">;</span>  </span></td>
+</tr></table>
+<p>
+\[\]\[\tag{%o19} \left[ \frac{\ensuremath{\mathrm{B0}}\, \left( {{\ensuremath{\mathrm{B0}}}^{2}}\mathop{+}{{\ensuremath{\mathrm{A0}}}^{2}}\right)  \alpha \, \ensuremath{\mathrm{\sigma T0}}}{4}\mathop{,}\mathop{-}\left( \frac{\ensuremath{\mathrm{B0}}\, \left( {{\ensuremath{\mathrm{B0}}}^{2}}\mathop{-}3 {{\ensuremath{\mathrm{A0}}}^{2}}\right)  \alpha \, \ensuremath{\mathrm{\sigma T0}}}{4}\right) \mathop{,}0\right] \]
+</p>
+<p>
+\[\]\[\tag{%o20} \left[ \mathop{-}\left( \frac{\ensuremath{\mathrm{A0}}\, \left( {{\ensuremath{\mathrm{B0}}}^{2}}\mathop{+}{{\ensuremath{\mathrm{A0}}}^{2}}\right)  \alpha \, \ensuremath{\mathrm{\sigma T0}}}{4}\right) \mathop{,}\frac{\ensuremath{\mathrm{A0}}\, \left( 3 {{\ensuremath{\mathrm{B0}}}^{2}}\mathop{-}{{\ensuremath{\mathrm{A0}}}^{2}}\right)  \alpha \, \ensuremath{\mathrm{\sigma T0}}}{4}\mathop{,}0\right] \]
+</p>
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+ -->	
+  </span></td>
+  <td><span class="input">
+<span class="code_variable">J11</span><span class="code_operator">:</span><span class="code_function">factor</span><span class="code_operator">(</span><span class="code_function">jacobian</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_function">Cnl1</span><span class="code_operator">(</span><span class="code_number">1</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_function">Snl1</span><span class="code_operator">(</span><span class="code_number">1</span><span class="code_operator">)</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_operator">[</span><span class="code_operator">'</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">A0</span><span class="code_endofline">,</span><span class="code_variable">T1</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_operator">'</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">B0</span><span class="code_endofline">,</span><span class="code_variable">T1</span><span class="code_operator">)</span><span class="code_operator">]</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">;</span><span class="code_endofline"><br>
+</span><span class="code_variable">Rem</span><span class="code_operator">:</span><span class="code_function">expand</span><span class="code_operator">(</span><span class="code_function">matrix</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_function">Cnl1</span><span class="code_operator">(</span><span class="code_number">1</span><span class="code_operator">)</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_operator">[</span><span class="code_function">Snl1</span><span class="code_operator">(</span><span class="code_number">1</span><span class="code_operator">)</span><span class="code_operator">]</span><span class="code_operator">)</span><span class="code_operator">−</span><span class="code_variable">J11</span><span class="code_endofline">.</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">A0</span><span class="code_endofline">,</span><span class="code_variable">B0</span><span class="code_operator">]</span><span class="code_endofline">,</span><span class="code_variable">T1</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">$</span>  </span></td>
+</tr></table>
+<p>
+\[\]\[\tag{1} \begin{pmatrix}\frac{\left( {{\ensuremath{\mathrm{B0}}}^{2}}\mathop{+}3 {{\ensuremath{\mathrm{A0}}}^{2}}\right)  \alpha }{4} &amp; \frac{\ensuremath{\mathrm{A0}}\, \ensuremath{\mathrm{B0}} \alpha }{2}\\
+\frac{\ensuremath{\mathrm{A0}}\, \ensuremath{\mathrm{B0}} \alpha }{2} &amp; \frac{\left( 3 {{\ensuremath{\mathrm{B0}}}^{2}}\mathop{+}{{\ensuremath{\mathrm{A0}}}^{2}}\right)  \alpha }{4}\end{pmatrix}\]
+</p>
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+ -->	
+  </span></td>
+  <td><span class="input">
+<span class="code_variable">J13</span><span class="code_operator">:</span><span class="code_function">factor</span><span class="code_operator">(</span><span class="code_function">jacobian</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_function">Cnl1</span><span class="code_operator">(</span><span class="code_number">3</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_function">Snl1</span><span class="code_operator">(</span><span class="code_number">3</span><span class="code_operator">)</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_operator">[</span><span class="code_operator">'</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">A0</span><span class="code_endofline">,</span><span class="code_variable">T1</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_operator">'</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">B0</span><span class="code_endofline">,</span><span class="code_variable">T1</span><span class="code_operator">)</span><span class="code_operator">]</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">;</span><span class="code_endofline"><br>
+</span><span class="code_variable">Rem</span><span class="code_operator">:</span><span class="code_function">expand</span><span class="code_operator">(</span><span class="code_function">matrix</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_function">Cnl1</span><span class="code_operator">(</span><span class="code_number">3</span><span class="code_operator">)</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_operator">[</span><span class="code_function">Snl1</span><span class="code_operator">(</span><span class="code_number">3</span><span class="code_operator">)</span><span class="code_operator">]</span><span class="code_operator">)</span><span class="code_operator">−</span><span class="code_variable">J13</span><span class="code_endofline">.</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">A0</span><span class="code_endofline">,</span><span class="code_variable">B0</span><span class="code_operator">]</span><span class="code_endofline">,</span><span class="code_variable">T1</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">$</span>  </span></td>
+</tr></table>
+<p>
+\[\]\[\tag{1} \begin{pmatrix}\mathop{-}\left( \frac{\left( \ensuremath{\mathrm{B0}}\mathop{-}\ensuremath{\mathrm{A0}}\right) \, \left( \ensuremath{\mathrm{B0}}\mathop{+}\ensuremath{\mathrm{A0}}\right)  \alpha }{4}\right)  &amp; \mathop{-}\left( \frac{\ensuremath{\mathrm{A0}}\, \ensuremath{\mathrm{B0}} \alpha }{2}\right) \\
+\frac{\ensuremath{\mathrm{A0}}\, \ensuremath{\mathrm{B0}} \alpha }{2} &amp; \mathop{-}\left( \frac{\left( \ensuremath{\mathrm{B0}}\mathop{-}\ensuremath{\mathrm{A0}}\right) \, \left( \ensuremath{\mathrm{B0}}\mathop{+}\ensuremath{\mathrm{A0}}\right)  \alpha }{4}\right) \end{pmatrix}\]
+</p>
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+ -->	
+  </span></td>
+  <td><span class="input">
+<span class="code_variable">Rem5</span><span class="code_operator">:</span><span class="code_function">factor</span><span class="code_operator">(</span><span class="code_function">matrix</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_function">Cnl1</span><span class="code_operator">(</span><span class="code_number">5</span><span class="code_operator">)</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_operator">[</span><span class="code_function">Snl1</span><span class="code_operator">(</span><span class="code_number">5</span><span class="code_operator">)</span><span class="code_operator">]</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">;</span>  </span></td>
+</tr></table>
+<p>
+\[\]\[\tag{em} \begin{pmatrix}\mathop{-}\left( \frac{5 \ensuremath{\mathrm{A0}}\, \left( 5 {{\ensuremath{\mathrm{B0}}}^{4}}\mathop{-}10 {{\ensuremath{\mathrm{A0}}}^{2}} {{\ensuremath{\mathrm{B0}}}^{2}}\mathop{+}{{\ensuremath{\mathrm{A0}}}^{4}}\right)  {{\alpha }^{2}}}{128}\right) \\
+\mathop{-}\left( \frac{5 \ensuremath{\mathrm{B0}}\, \left( {{\ensuremath{\mathrm{B0}}}^{4}}\mathop{-}10 {{\ensuremath{\mathrm{A0}}}^{2}} {{\ensuremath{\mathrm{B0}}}^{2}}\mathop{+}5 {{\ensuremath{\mathrm{A0}}}^{4}}\right)  {{\alpha }^{2}}}{128}\right) \end{pmatrix}\]
+</p>
+
+ <hr>
+ <p><small> Created with <a href="https://wxMaxima-developers.github.io/wxmaxima/">wxMaxima</a>.</small></p>
+ <small> The source of this Maxima session can be downloaded <a href="c2_VdpHarms_htmlimg/c2_VdpHarms.wxmx">here</a>.</small>
+ </body>
+</html>

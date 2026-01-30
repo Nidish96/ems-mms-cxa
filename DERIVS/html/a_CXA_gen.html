@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>a_CXA_gen</title>
+  <meta name="generator" content="wxMaxima">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    displayAlign: "left",
+    context: "MathJax",
+    TeX: {TagSide: "left"}
+  })
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  // A comment that hinders wxWidgets from optimizing this tag too much.
+</script>
+  <link rel="stylesheet" type="text/css" href="a_CXA_gen_htmlimg/a_CXA_gen.css">
+ </head>
+ <body>
+
+<!-- ************************************************************************** -->
+<!-- *        Created with wxMaxima version 24.02.2_DevelopmentSnapshot       * -->
+<!-- ************************************************************************** -->
+<noscript><div class="error message"><p>Please enable JavaScript in order to get a 2d display of the equations embedded in this web page.</p></div></noscript><p hidden = "hidden">\(      \DeclareMathOperator{\abs}{abs}
+      \newcommand{\ensuremath}[1]{\mbox{$#1$}}
+\)</p>
+
+<!-- Text cell -->
+
+
+<div class="comment">
+In this worksheet, we shall derive CXA equations in the general form. We shall invoke the near identity transformation and also derive the governing equations for both the averaged quantities (denoted A0,B0 here) and the generating functions (denoted A1,B1 here).<br><br>We start with the basics.
+</div>
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+(%i6)	
+  </span></td>
+  <td><span class="input">
+<span class="code_function">kill</span><span class="code_operator">(</span><span class="code_variable">all</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_variable">derivsubst</span><span class="code_operator">:</span><span class="code_function">true</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_variable">derivabbrev</span><span class="code_operator">:</span><span class="code_function">true</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_function">depends</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">A</span><span class="code_endofline">,</span><span class="code_variable">B</span><span class="code_endofline">,</span><span class="code_variable">A0</span><span class="code_endofline">,</span><span class="code_variable">B0</span><span class="code_endofline">,</span><span class="code_variable">A1</span><span class="code_endofline">,</span><span class="code_variable">B1</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_variable">t</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_function">gradef</span><span class="code_operator">(</span><span class="code_variable">σ</span><span class="code_endofline">,</span> <span class="code_variable">t</span><span class="code_endofline">,</span> <span class="code_variable">Ω</span><span class="code_operator">+</span><span class="code_variable">ε</span><span class="code_operator">·</span><span class="code_variable">ω</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_function">fnl</span><span class="code_operator">(</span><span class="code_variable">x</span><span class="code_endofline">,</span><span class="code_variable">xd</span><span class="code_operator">)</span><span class="code_operator">:</span><span class="code_operator">=</span><span class="code_variable">α</span><span class="code_operator">·</span><span class="code_variable">x</span><span class="code_operator">·</span><span class="code_operator">·</span><span class="code_number">3</span><span class="code_endofline">$</span>  <span class="code_comment">/* Set the nonlinearity. 0, α*x**3, α*x**2*xd */</span><span class="code_endofline"><br>
+</span><span class="code_function">eom</span><span class="code_operator">(</span><span class="code_variable">x</span><span class="code_endofline">,</span><span class="code_variable">xd</span><span class="code_operator">)</span><span class="code_operator">:</span><span class="code_operator">=</span><span class="code_operator">[</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">x</span><span class="code_endofline">,</span><span class="code_variable">t</span><span class="code_operator">)</span><span class="code_operator">−</span><span class="code_variable">xd</span><span class="code_endofline">,</span> <span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">xd</span><span class="code_endofline">,</span><span class="code_variable">t</span><span class="code_operator">)</span> <span class="code_operator">+</span> <span class="code_variable">ε</span><span class="code_operator">·</span><span class="code_number">2</span><span class="code_operator">·</span><span class="code_variable">ζ</span><span class="code_operator">·</span><span class="code_variable">ω0</span><span class="code_operator">·</span><span class="code_variable">xd</span> <span class="code_operator">+</span> <span class="code_variable">ω0</span><span class="code_operator">·</span><span class="code_operator">·</span><span class="code_number">2</span><span class="code_operator">·</span><span class="code_variable">x</span> <span class="code_operator">+</span> <span class="code_variable">ε</span><span class="code_operator">·</span><span class="code_function">fnl</span><span class="code_operator">(</span><span class="code_variable">x</span><span class="code_endofline">,</span><span class="code_variable">xd</span><span class="code_operator">)</span> <span class="code_operator">−</span> <span class="code_variable">ε</span><span class="code_operator">·</span><span class="code_variable">F</span><span class="code_operator">·</span><span class="code_function">cos</span><span class="code_operator">(</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_operator">]</span><span class="code_endofline">;</span>  </span></td>
+</tr></table>
+<p>
+\[\]\[\tag{%o6} \mathop{eom}\left( x\mathop{,}\ensuremath{\mathrm{xd}}\right) \mathop{:=}\left[ {x_t}\mathop{-}\ensuremath{\mathrm{xd}}\mathop{,}{{\ensuremath{\mathrm{xd}}}_t}\mathop{+}\epsilon  2 \zeta \, \ensuremath{\mathrm{\omega 0}}\, \ensuremath{\mathrm{xd}}\mathop{+}{{\ensuremath{\mathrm{\omega 0}}}^{2}} x\mathop{+}\epsilon  \mathop{fnl}\left( x\mathop{,}\ensuremath{\mathrm{xd}}\right) \mathop{+}\mathop{-}\epsilon  F \cos{\left( \sigma \right) }\right] \]
+</p>
+
+
+<!-- Text cell -->
+
+
+<div class="comment">
+Now we define the displacement and velocity coordinates.
+</div>
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+(%i8)	
+  </span></td>
+  <td><span class="input">
+<span class="code_variable">x</span><span class="code_operator">:</span><span class="code_variable">A</span><span class="code_operator">·</span><span class="code_function">cos</span><span class="code_operator">(</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_operator">+</span><span class="code_variable">B</span><span class="code_operator">·</span><span class="code_function">sin</span><span class="code_operator">(</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_variable">xd</span><span class="code_operator">:</span><span class="code_variable">Ω</span><span class="code_operator">·</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">x</span><span class="code_endofline">,</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_endofline">$</span>  </span></td>
+</tr></table>
+
+
+
+<!-- Text cell -->
+
+
+<div class="comment">
+We now substitute the above into the equations of motion and derive the equations in terms of the harmonic amplitudes A,B.
+</div>
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+(%i9)	
+  </span></td>
+  <td><span class="input">
+<span class="code_variable">ABdot</span><span class="code_operator">:</span><span class="code_function">trigreduce</span><span class="code_operator">(</span><span class="code_function">solve</span><span class="code_operator">(</span><span class="code_function">eom</span><span class="code_operator">(</span><span class="code_variable">x</span><span class="code_endofline">,</span><span class="code_variable">xd</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_function">diff</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">A</span><span class="code_endofline">,</span><span class="code_variable">B</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_variable">t</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_operator">[</span><span class="code_number">1</span><span class="code_operator">]</span><span class="code_endofline">;</span>  </span></td>
+</tr></table>
+<p>
+\[\]\[\tag{Bdo} \]
+</p>
+
+
+<!-- Text cell -->
+
+
+<div class="comment">
+We now replace A and B with A0+ε*A1 and B0+ε*B1 respectively. We only use the RHS since the zeroth harmonic of the RHS is what the averaged quantities A0,B0 will evolve by.<br>We have to be a little non rigorous here because there's no easy way to set Ω**2-ω0**2 to be O(ε) programmatically. Inspection should convince us of the fix that's done below.
+</div>
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+(%i11)	
+  </span></td>
+  <td><span class="input">
+<span class="code_variable">RHS</span><span class="code_operator">:</span><span class="code_function">subst</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">A</span><span class="code_operator">=</span><span class="code_variable">A0</span><span class="code_operator">+</span><span class="code_variable">ε</span><span class="code_operator">·</span><span class="code_variable">A1</span><span class="code_endofline">,</span> <span class="code_variable">B</span><span class="code_operator">=</span><span class="code_variable">B0</span><span class="code_operator">+</span><span class="code_variable">ε</span><span class="code_operator">·</span><span class="code_variable">B1</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_function">map</span><span class="code_operator">(</span><span class="code_variable">rhs</span><span class="code_endofline">,</span> <span class="code_variable">ABdot</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_variable">RHS</span><span class="code_operator">:</span><span class="code_function">subst</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">A1</span><span class="code_operator">=</span><span class="code_number">0</span><span class="code_endofline">,</span><span class="code_variable">B1</span><span class="code_operator">=</span><span class="code_number">0</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_variable">RHS</span><span class="code_operator">)</span><span class="code_endofline">;</span>  </span></td>
+</tr></table>
+<p>
+\[\]\[\tag{H} \]
+</p>
+
+
+<!-- Text cell -->
+
+
+<div class="comment">
+Now we average the RHS to get the slow flow equations.
+</div>
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+(%i12)	
+  </span></td>
+  <td><span class="input">
+<span class="code_variable">RHSavg</span><span class="code_operator">:</span><span class="code_function">expand</span><span class="code_operator">(</span><span class="code_function">integrate</span><span class="code_operator">(</span><span class="code_variable">RHS</span><span class="code_endofline">,</span> <span class="code_variable">σ</span><span class="code_endofline">,</span> <span class="code_number">0</span><span class="code_endofline">,</span> <span class="code_number">2</span><span class="code_operator">·</span><span class="code_variable">%pi</span><span class="code_operator">)</span><span class="code_operator">/</span><span class="code_number">2</span><span class="code_operator">/</span><span class="code_variable">%pi</span><span class="code_operator">)</span><span class="code_endofline">;</span>  </span></td>
+</tr></table>
+<p>
+\[\]\[\tag{HSav} \]
+</p>
+
+
+<!-- Text cell -->
+
+
+<div class="comment">
+We take the remaining and equate that to the generating function evolution.
+</div>
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+(%i13)	
+  </span></td>
+  <td><span class="input">
+<span class="code_function">expand</span><span class="code_operator">(</span><span class="code_function">solve</span><span class="code_operator">(</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">A1</span><span class="code_endofline">,</span><span class="code_variable">B1</span><span class="code_operator">]</span><span class="code_endofline">,</span><span class="code_variable">t</span><span class="code_operator">)</span><span class="code_operator">−</span><span class="code_function">subst</span><span class="code_operator">(</span><span class="code_variable">ε</span><span class="code_operator">=</span><span class="code_number">1</span><span class="code_endofline">,</span> <span class="code_variable">RHS</span><span class="code_operator">−</span><span class="code_variable">RHSavg</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_function">diff</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">A1</span><span class="code_endofline">,</span><span class="code_variable">B1</span><span class="code_operator">]</span><span class="code_endofline">,</span><span class="code_variable">t</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">;</span>  </span></td>
+</tr></table>
+<p>
+\[\]\[\tag{%o13} \]
+</p>
+
+
+<!-- Text cell -->
+
+
+<div class="comment">
+We now repeat the process, but in polar notation.
+</div>
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+(%i17)	
+  </span></td>
+  <td><span class="input">
+<span class="code_function">depends</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">β</span><span class="code_endofline">,</span><span class="code_variable">β0</span><span class="code_endofline">,</span><span class="code_variable">β1</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_variable">t</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_variable">x</span><span class="code_operator">:</span><span class="code_variable">A</span><span class="code_operator">·</span><span class="code_function">cos</span><span class="code_operator">(</span><span class="code_variable">σ</span><span class="code_operator">+</span><span class="code_variable">β</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_variable">xd</span><span class="code_operator">:</span><span class="code_variable">Ω</span><span class="code_operator">·</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_variable">x</span><span class="code_endofline">,</span><span class="code_variable">σ</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_variable">Abtdot</span><span class="code_operator">:</span><span class="code_function">trigreduce</span><span class="code_operator">(</span><span class="code_function">solve</span><span class="code_operator">(</span><span class="code_function">eom</span><span class="code_operator">(</span><span class="code_variable">x</span><span class="code_endofline">,</span><span class="code_variable">xd</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_function">diff</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">A</span><span class="code_endofline">,</span><span class="code_variable">β</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_variable">t</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_operator">[</span><span class="code_number">1</span><span class="code_operator">]</span><span class="code_endofline">$</span>  </span></td>
+</tr></table>
+
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+(%i19)	
+  </span></td>
+  <td><span class="input">
+<span class="code_variable">RHS</span><span class="code_operator">:</span><span class="code_function">subst</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">A</span><span class="code_operator">=</span><span class="code_variable">A0</span><span class="code_operator">+</span><span class="code_variable">ε</span><span class="code_operator">·</span><span class="code_variable">A1</span><span class="code_endofline">,</span> <span class="code_variable">β</span><span class="code_operator">=</span><span class="code_variable">β0</span><span class="code_operator">+</span><span class="code_variable">ε</span><span class="code_operator">·</span><span class="code_variable">β1</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_function">map</span><span class="code_operator">(</span><span class="code_variable">rhs</span><span class="code_endofline">,</span><span class="code_variable">Abtdot</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">$</span><span class="code_endofline"><br>
+</span><span class="code_variable">RHSavg</span><span class="code_operator">:</span><span class="code_function">expand</span><span class="code_operator">(</span><span class="code_function">integrate</span><span class="code_operator">(</span><span class="code_function">taylor</span><span class="code_operator">(</span><span class="code_variable">RHS</span><span class="code_endofline">,</span> <span class="code_variable">ε</span><span class="code_endofline">,</span> <span class="code_number">0</span><span class="code_endofline">,</span> <span class="code_number">1</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_variable">σ</span><span class="code_endofline">,</span> <span class="code_number">0</span><span class="code_endofline">,</span> <span class="code_number">2</span><span class="code_operator">·</span><span class="code_variable">%pi</span><span class="code_operator">)</span><span class="code_operator">/</span><span class="code_number">2</span><span class="code_operator">/</span><span class="code_variable">%pi</span><span class="code_operator">)</span><span class="code_endofline">;</span>  </span></td>
+</tr></table>
+<p>
+\[\]\[\tag{HSav} \left[ \mathop{-}\left( \ensuremath{\mathrm{A0}} \epsilon  \zeta \, \ensuremath{\mathrm{\omega 0}}\right) \mathop{-}\frac{F \sin{\left( \ensuremath{\mathrm{\beta 0}}\right) } \epsilon }{2 \Omega }\mathop{,}\frac{{{\ensuremath{\mathrm{\omega 0}}}^{2}}}{2 \Omega }\mathop{-}\epsilon  \omega \mathop{-}\frac{F \cos{\left( \ensuremath{\mathrm{\beta 0}}\right) } \epsilon }{2 \ensuremath{\mathrm{A0}} \Omega }\mathop{+}\frac{3 {{\ensuremath{\mathrm{A0}}}^{2}} \alpha  \epsilon }{8 \Omega }\mathop{-}\frac{\Omega }{2}\right] \]
+</p>
+
+
+<!-- Code cell -->
+
+
+<table><tr><td>
+  <span class="prompt">
+(%i20)	
+  </span></td>
+  <td><span class="input">
+<span class="code_function">expand</span><span class="code_operator">(</span><span class="code_function">factor</span><span class="code_operator">(</span><span class="code_function">taylor</span><span class="code_operator">(</span><span class="code_function">solve</span><span class="code_operator">(</span><span class="code_variable">ε</span><span class="code_operator">·</span><span class="code_function">diff</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">A1</span><span class="code_endofline">,</span><span class="code_variable">β1</span><span class="code_operator">]</span><span class="code_endofline">,</span><span class="code_variable">t</span><span class="code_operator">)</span><span class="code_operator">−</span><span class="code_operator">(</span><span class="code_variable">RHS</span><span class="code_operator">−</span><span class="code_variable">RHSavg</span><span class="code_operator">)</span><span class="code_endofline">,</span> <span class="code_function">diff</span><span class="code_operator">(</span><span class="code_operator">[</span><span class="code_variable">A1</span><span class="code_endofline">,</span><span class="code_variable">β1</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_variable">t</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_operator">[</span><span class="code_number">1</span><span class="code_operator">]</span><span class="code_endofline">,</span> <span class="code_variable">ε</span><span class="code_endofline">,</span> <span class="code_number">0</span><span class="code_endofline">,</span> <span class="code_number">1</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_operator">)</span><span class="code_endofline">;</span>  </span></td>
+</tr></table>
+<p>
+\[\]\[\tag{%o20} \]
+</p>
+
+ <hr>
+ <p><small> Created with <a href="https://wxMaxima-developers.github.io/wxmaxima/">wxMaxima</a>.</small></p>
+ <small> The source of this Maxima session can be downloaded <a href="a_CXA_gen_htmlimg/a_CXA_gen.wxmx">here</a>.</small>
+ </body>
+</html>
